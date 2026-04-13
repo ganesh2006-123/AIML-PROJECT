@@ -1,0 +1,66 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+# Load dataset from Excel
+df = pd.read_excel("rainfall_dataset.xlsx")
+
+# ----------------------------
+# Graph 1: Temperature vs Rain
+# ----------------------------
+plt.figure()
+plt.scatter(df['Temperature'], df['Rain'])
+plt.xlabel("Temperature")
+plt.ylabel("Rain (0=No,1=Yes)")
+plt.title("Temperature vs Rainfall")
+plt.show()
+
+# ----------------------------
+# Graph 2: Humidity vs Rain
+# ----------------------------
+plt.figure()
+plt.scatter(df['Humidity'], df['Rain'])
+plt.xlabel("Humidity")
+plt.ylabel("Rain (0=No,1=Yes)")
+plt.title("Humidity vs Rainfall")
+plt.show()
+
+# ----------------------------
+# Graph 3: Correlation Heatmap
+# ----------------------------
+plt.figure()
+sns.heatmap(df.corr(), annot=True)
+plt.title("Feature Correlation")
+plt.show()
+
+# Features and target
+X = df[['Temperature','Humidity','Pressure','WindSpeed']]
+y = df['Rain']
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# Model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Accuracy
+accuracy = model.score(X_test, y_test)
+print("Model Accuracy:", accuracy)
+
+# ----------------------------
+# User Input
+# ----------------------------
+temp = float(input("Temperature: "))
+hum = float(input("Humidity: "))
+pres = float(input("Pressure: "))
+wind = float(input("Wind Speed: "))
+
+prediction = model.predict([[temp, hum, pres, wind]])
+
+if prediction[0] == 1:
+    print("Rainfall likely")
+else:
+    print("No Rain")
